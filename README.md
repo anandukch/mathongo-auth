@@ -1,4 +1,4 @@
-# vctech-phase2-backend
+# MathonGo Auth
 
 ## Features:
 1. Login
@@ -7,7 +7,7 @@
 4. Password reset
 
 ## Technologies used:
-The backend makes use of multer for invoice uploads, JWT for authentication, telegraf to work with telegram bots, express, Node.js and mongoDB for the database.
+The backend makes use of google api and nodemailer for sending email,otp-generator for generatin otp,  express, Node.js and mongoDB for the database.
 
 # Working
 These are the routes:
