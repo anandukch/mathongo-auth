@@ -91,7 +91,7 @@ module.exports.signup = async (req, res) => {
 
 }
 
-module.exports.validateOTP = async (req, res) => {
+module.exports.verifyEmail= async (req, res) => {
   try {
 
     const schema = Joi.object().keys({
