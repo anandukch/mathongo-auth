@@ -45,7 +45,6 @@ module.exports.login = async (req, res) => {
       message: 'Internal Server Error',
       error: error.message,
     });
-
   }
 }
 
@@ -57,6 +56,11 @@ module.exports.signup = async (req, res) => {
       password: Joi.string().required(),
     });
     const result = schema.validate(req.body);
+    if (result.error) {
+      return res.status(400).json({
+        message: result.error.details[0].message,
+      });
+    }
     if (await User.findOne({ email: req.body.email })) {
       return res.status(400).json({
         message: "Email already exists",
@@ -69,17 +73,10 @@ module.exports.signup = async (req, res) => {
     });
     await newUser.save();
     await sendOtp(req.body.email);
+    return res.status(200).json({
+      message: "success. Otp has been send to your email",
+    });
 
-
-    if (result.error) {
-      res.status(400).json({
-        message: result.error.details[0].message,
-      });
-    } else {
-      res.status(200).json({
-        message: "success",
-      });
-    }
   } catch (error) {
     return res.status(500).json({
       message: 'Internal Server Error',
@@ -90,7 +87,7 @@ module.exports.signup = async (req, res) => {
 
 }
 
-module.exports.verifyEmail= async (req, res) => {
+module.exports.verifyEmail = async (req, res) => {
   try {
 
     const schema = Joi.object().keys({
