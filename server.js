@@ -9,9 +9,12 @@ connection();
 app.use(cors());
 app.use(bodyParser.json());
 app.use(express.json());
+
+// test api
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
+
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/password-reset', require('./routes/passwordReset'));
 

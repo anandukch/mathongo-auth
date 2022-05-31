@@ -68,7 +68,6 @@ module.exports.signup = async (req, res) => {
       password: req.body.password,
     });
     await newUser.save();
-    // await sendEmail(newUser.email, "Validation otp", OTP);
     await sendOtp(req.body.email);
 
 
