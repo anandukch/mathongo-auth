@@ -13,15 +13,6 @@ module.exports.sendOtp = async (email) => {
     }).catch((err) => {
       console.log(err);
     })
-
-    // await new Otp({
-    //   otp: OTP,
-    //   email: email,
-    // }).save().then(async (result) => {
-    //   await sendEmail(email, "Validation otp", OTP);
-    // }).catch((err) => {
-    //   console.log(err);
-    // })
   } catch (error) {
     throw new Error(error);
 
