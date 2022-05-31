@@ -4,6 +4,7 @@ const { User } = require("../models/user");
 const sendEmail = require("../utils/mailer");
 const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
+const { sendOtp } = require("../utils/sendOtp");
 module.exports.login = async (req, res) => {
   try {
     const schema = Joi.object().keys({
@@ -12,29 +13,30 @@ module.exports.login = async (req, res) => {
     });
     const result = schema.validate(req.body);
     if (result.error) {
-      res.status(400).json({
+      return res.status(400).json({
         message: result.error.details[0].message,
       });
     }
     const user = await User.findOne({ email: req.body.email });
     if (!user) {
-      res.status(400).json({
-        message: "Invalid email or password",
+      return res.status(400).json({
+        message: "Invalid email",
       });
     }
     if (!user.isVerified) {
-      res.status(400).json({
-        message: "Please verify your email",
+      await sendOtp(user.email);
+      return res.status(400).json({
+        message: `Otp has benn send to ${user.email} Please verify`,
       });
     }
     const isMatch = await user.comparePassword(req.body.password);
     if (!isMatch) {
-      res.status(400).json({
-        message: "Invalid email or password",
+      return res.status(400).json({
+        message: "Invalid password",
       });
     }
     const token = jwt.sign({ _id: user._id }, process.env.JWT_SECRET, { expiresIn: "1h" });
-    res.status(200).json({
+    return res.status(200).json({
       message: "success",
       token: token,
     });
@@ -60,16 +62,15 @@ module.exports.signup = async (req, res) => {
         message: "Email already exists",
       });
     }
-    let newUser = new User(req.body);
-    const OTP = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
-    await new Otp({
-      otp: OTP,
+    const newUser = new User({
+      name: req.body.name,
       email: req.body.email,
-    }).save();
-
-
-    await sendEmail(newUser.email, "Validation otp", OTP);
+      password: req.body.password,
+    });
     await newUser.save();
+    // await sendEmail(newUser.email, "Validation otp", OTP);
+    await sendOtp(req.body.email);
+
 
     if (result.error) {
       res.status(400).json({
@@ -116,6 +117,9 @@ module.exports.validateOTP = async (req, res) => {
     }
     await otp.delete();
     await User.findOneAndUpdate({ email: user.email }, { isVerified: true });
+    return res.status(200).json({
+      message: "user verfied successfully",
+    });
 
 
   } catch (error) {
