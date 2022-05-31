@@ -21,7 +21,7 @@ module.exports.requestPasswordReset=async (req, res) => {
           }).save();
       }
 
-      const link = `${process.env.DEV_URL}/api/password-reset/${user._id}/${token.token}`;
+      const link = `${process.env.PROD ? process.env.DEV_URL : process.env.PROD_URL}/api/password-reset/${user._id}/${token.token}`;
       await sendEmail(user.email, "Password reset", link);
 
       return res.send("password reset link sent to your email account");
