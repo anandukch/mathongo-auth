@@ -3,6 +3,7 @@ const Otp = require("../models/otp");
 const { User } = require("../models/user");
 const sendEmail = require("../utils/mailer");
 const jwt=require("jsonwebtoken");
+const otpGenerator = require("otp-generator");
 module.exports.login = async (req, res) => {
   try {
     const schema = Joi.object().keys({
