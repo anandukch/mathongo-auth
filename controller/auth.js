@@ -2,7 +2,7 @@ const Joi = require("joi");
 const Otp = require("../models/otp");
 const { User } = require("../models/user");
 const sendEmail = require("../utils/mailer");
-const jwt=require("jsonwebtoken");
+const jwt = require("jsonwebtoken");
 const otpGenerator = require("otp-generator");
 module.exports.login = async (req, res) => {
   try {
@@ -55,6 +55,11 @@ module.exports.signup = async (req, res) => {
       password: Joi.string().required(),
     });
     const result = schema.validate(req.body);
+    if (await User.findOne({ email: req.body.email })) {
+      return res.status(400).json({
+        message: "Email already exists",
+      });
+    }
     let newUser = new User(req.body);
     const OTP = otpGenerator.generate(4, { upperCaseAlphabets: false, specialChars: false, lowerCaseAlphabets: false });
     await new Otp({
@@ -96,7 +101,7 @@ module.exports.validateOTP = async (req, res) => {
       return res.status(400).json({
         message: result.error.details[0].message,
       });
-    } 
+    }
     const otp = await Otp.findOne({ otp: req.body.otp });
     if (!otp) {
       return res.status(400).json({

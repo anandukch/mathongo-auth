@@ -105,7 +105,7 @@ const sendEmail = async (email, subject, text) => {
     // });
     const messageId = await sendMail({
       from: "admin@mathongo.in",
-      to: "sreedevi2301051@gmail.com",
+      to: email,
       subject: subject,
       text: text,
     });
