@@ -5,15 +5,20 @@ dotenv.config();
 const bodyParser = require('body-parser');
 const {connection}=require("./config/db");
 const cors = require('cors');
+const cookieParser=require("cookie-parser")
 connection();
-app.use(cors());
-app.use(bodyParser.json());
-app.use(express.json());
 
+// app.use(cors());
+app.use(bodyParser.urlencoded({ extended: false }))
+// app.use(bodyParser.json());
+app.use(express.json());
+app.set('view engine', 'ejs');
+app.use(cookieParser())
 // test api
 app.get('/', (req, res) => {
     res.send('Hello World!');
 });
+
 
 app.use('/api/auth', require('./routes/auth'));
 app.use('/api/password-reset', require('./routes/passwordReset'));

@@ -37,6 +37,7 @@ module.exports.processPasswordReset = async (req, res) => {
     try {
         const schema = Joi.object({ password: Joi.string().required() });
         const { error } = schema.validate(req.body);
+        
         if (error) return res.status(400).send(error.details[0].message);
 
         const user = await User.findById(req.params.userId);
@@ -52,9 +53,11 @@ module.exports.processPasswordReset = async (req, res) => {
         await user.save();
         await token.delete();
 
-        res.send("password reset sucessfully.");
+        return res.status(200).json({
+            message: "password reset successfully",
+        });
     } catch (error) {
-        res.send("An error occured");
+        res.status(400).send("Invalid link or expired");
         console.log(error);
     }
 }
